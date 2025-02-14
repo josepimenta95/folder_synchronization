@@ -1,4 +1,6 @@
-How to execute Script:
+# Folder Synchronization
+
+## How to execute Script:
 
 python -m source.main "original_path" "replica_path" number_of_seconds "logs_folder_path"
 
@@ -7,8 +9,7 @@ where "original_path" is the path of the original folder,
 number of seconds is the number of seconds between synchronizations
 and "logs_folder_path" is the path where the log files will be created (one file for each synchronization)
 
-EXAMPLE:
-
+### Example:
 
 python -m source.main "C:\Users\username\Documents\original_folder" "C:\Users\username\Documents\replica_folder" 60 "C:\Users\username\Documents\logs_folder"
 
