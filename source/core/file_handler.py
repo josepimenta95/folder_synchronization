@@ -77,8 +77,9 @@ def remove_file(path: Path) -> None:
 
 # Remove Folder from Replica
 def remove_folder(path: Path, operation: str) -> None:
-    path.rmdir()
-    logger.info(format_log_operation(path, operation))
+    if path.exists():
+        path.rmdir()
+        logger.info(format_log_operation(path, operation))
 
 
 # Remove Folder from Replica and All Content Inside Said Folder

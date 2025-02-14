@@ -7,23 +7,24 @@ from source.core.exceptions import (
 
 
 def validate_path(
-    path_argument: str, argument_name: str
+    path_argument: str, argument_name: str, create_folder: bool = False
 ) -> Tuple[Optional[Path], Optional[str]]:
 
-    # Validate if Path Exists
-    try:
-        path = Path(path_argument)
-        if not path.exists():
-            return None, f"{argument_name} does not exist"
+    path = Path(path_argument)
 
-    except (FileNotFoundError, PermissionError, OSError) as e:
-        return None, f"Error accessing {argument_name}: {str(e)}"
+    # Validate if Path Exists as a Folder
+    if not path.exists():
+        if create_folder:
+            try:
+                path.mkdir(parents=True, exist_ok=True)
+                return path, None
 
-    except Exception as e:
-        return (
-            None,
-            f"Unexpected error occurred while processing {argument_name}: {str(e)}",
-        )
+            except (PermissionError, OSError) as e:
+                return None, f"Failed to create {argument_name}: {str(e)}"
+        return None, f"{argument_name} does not exist"
+
+    if create_folder and not path.is_dir():
+        return None, f"{argument_name} exists but is not a folder"
 
     return path, None
 
@@ -42,7 +43,9 @@ def read_command_line_arguments(argv: list[str]) -> Tuple[Path, Path, int, Path]
         dict_errors["Source Path"] = error_message
 
     # Validate Replica Path
-    replica_path, error_message = validate_path(argv[2], "Replica Path")
+    replica_path, error_message = validate_path(
+        argv[2], "Replica Path", create_folder=True
+    )
     if error_message:
         dict_errors["Replica Path"] = error_message
 
@@ -59,7 +62,9 @@ def read_command_line_arguments(argv: list[str]) -> Tuple[Path, Path, int, Path]
         )
 
     # Validate Log File Path
-    log_file_path, error_message = validate_path(argv[4], "Log File Path")
+    log_file_path, error_message = validate_path(
+        argv[4], "Log File Path", create_folder=True
+    )
     if error_message:
         dict_errors["Log File Path"] = error_message
 
